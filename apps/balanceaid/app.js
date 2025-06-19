@@ -1,4 +1,4 @@
-// ORIGO BalanceAid – Dauerzyklus mit 3s Pause, zentriert, Logging, verbessertem Tap
+// ORIGO BalanceAid – stabile Endlosversion mit 3s Pause, Tapfix, Logging
 
 let running = false;
 let phaseIndex = 0;
@@ -6,8 +6,10 @@ let hrm = "--";
 let hrmStart = null;
 let hrmEnd = null;
 let logs = [];
+let tapCount = 0;
+let tapTimer = null;
 
-// Atemphasen (Pause auf 3 Sekunden reduziert)
+// Atemphasen inkl. 3s Pause
 const phases = [
   { label: "Einatmen", duration: 4, color: "#0000FF", action: "pulse" },
   { label: "Halten", duration: 7, color: "#00FF00", action: "none" },
@@ -24,7 +26,6 @@ function showPhase(label, color, time, total) {
 
   g.setColor("#FFFFFF");
   g.setFontAlign(0, -1);
-
   g.setFont("Vector", 28);
   g.drawString(label, cx, 20);
 
@@ -68,9 +69,14 @@ function nextPhase() {
   showPhase(p.label, p.color, t, p.duration);
   startAction(p.action, p.duration);
 
-  let secInt = setInterval(() => {
-    if (!running || t >= p.duration) {
-      clearInterval(secInt);
+  let interval = setInterval(() => {
+    if (!running) {
+      clearInterval(interval);
+      return;
+    }
+
+    if (t >= p.duration) {
+      clearInterval(interval);
 
       if (phaseIndex === 2) {
         hrmEnd = hrm;
@@ -80,10 +86,10 @@ function nextPhase() {
       }
 
       phaseIndex = (phaseIndex + 1) % phases.length;
-      setTimeout(nextPhase, 100);
-      return;
+      setTimeout(nextPhase, 200);
+    } else {
+      showPhase(p.label, p.color, ++t, p.duration);
     }
-    showPhase(p.label, p.color, ++t, p.duration);
   }, 1000);
 }
 
@@ -110,34 +116,27 @@ function toggleApp() {
   }
 }
 
+function initScreen() {
+  g.clear();
+  g.setFontAlign(0, 0);
+  g.setFont("Vector", 24);
+  g.drawString("BalanceAid\nDoppeltap", g.getWidth()/2, g.getHeight()/2);
+}
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setLCDTimeout(0);
-g.clear();
-g.setFontAlign(0, 0);
-g.setFont("Vector", 24);
-g.drawString("BalanceAid\nDoppeltap", g.getWidth()/2, g.getHeight()/2);
+initScreen();
 
-// Verbesserte Doppeltap-Erkennung
-let tapCount = 0;
-let tapTimer;
+// Stabile Doppeltap-Erkennung
 Bangle.on("tap", () => {
-  tapCount++;
-  if (tapCount === 1) {
-    g.clear();
-    g.setColor("#FFFF00");
-    g.setFontAlign(0, 0);
-    g.setFont("Vector", 24);
-    g.drawString("Tap erkannt...", g.getWidth()/2, g.getHeight()/2);
-    tapTimer = setTimeout(() => {
-      tapCount = 0;
-      g.clear();
-      g.setFont("Vector", 24);
-      g.drawString("BalanceAid\nDoppeltap", g.getWidth()/2, g.getHeight()/2);
-    }, 600);
-  } else if (tapCount === 2) {
-    clearTimeout(tapTimer);
-    tapCount = 0;
+  const now = Date.now();
+  if (!global._lastTap) global._lastTap = 0;
+
+  if (now - global._lastTap < 600) {
     toggleApp();
+    global._lastTap = 0;
+  } else {
+    global._lastTap = now;
   }
 });
