@@ -1,15 +1,13 @@
-// ORIGO BalanceAid – stabile Endlosversion mit 3s Pause, Tapfix, Logging
+// ORIGO BalanceAid – startet automatisch, 3s Pause, Loop, Logging
 
-let running = false;
+let running = true;
 let phaseIndex = 0;
 let hrm = "--";
 let hrmStart = null;
 let hrmEnd = null;
 let logs = [];
-let tapCount = 0;
-let tapTimer = null;
 
-// Atemphasen inkl. 3s Pause
+// Atemphasen
 const phases = [
   { label: "Einatmen", duration: 4, color: "#0000FF", action: "pulse" },
   { label: "Halten", duration: 7, color: "#00FF00", action: "none" },
@@ -93,50 +91,14 @@ function nextPhase() {
   }, 1000);
 }
 
-function toggleApp() {
-  running = !running;
-  if (running) {
-    phaseIndex = 0;
-    hrmStart = null;
-    hrmEnd = null;
-    Bangle.setHRMPower(1);
-    Bangle.on("HRM", d => {
-      hrm = Math.round(d.bpm);
-      if (hrmStart === null) hrmStart = hrm;
-    });
-    nextPhase();
-  } else {
-    Bangle.setHRMPower(0);
-    Bangle.removeAllListeners("HRM");
-    g.clear();
-    g.setColor("#FFFFFF");
-    g.setFontAlign(0, 0);
-    g.setFont("Vector", 24);
-    g.drawString("BalanceAid beendet", g.getWidth()/2, g.getHeight()/2);
-  }
-}
-
-function initScreen() {
-  g.clear();
-  g.setFontAlign(0, 0);
-  g.setFont("Vector", 24);
-  g.drawString("BalanceAid\nDoppeltap", g.getWidth()/2, g.getHeight()/2);
-}
-
+// Setup + Autostart
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setLCDTimeout(0);
-initScreen();
-
-// Stabile Doppeltap-Erkennung
-Bangle.on("tap", () => {
-  const now = Date.now();
-  if (!global._lastTap) global._lastTap = 0;
-
-  if (now - global._lastTap < 600) {
-    toggleApp();
-    global._lastTap = 0;
-  } else {
-    global._lastTap = now;
-  }
+Bangle.setHRMPower(1);
+Bangle.on("HRM", d => {
+  hrm = Math.round(d.bpm);
+  if (hrmStart === null) hrmStart = hrm;
 });
+
+nextPhase(); // automatisch starten
