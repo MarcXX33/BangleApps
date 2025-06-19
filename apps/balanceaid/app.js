@@ -74,15 +74,14 @@ Bangle.drawWidgets();
 Bangle.setLCDTimeout(0);
 g.clear();
 E.showMessage("BalanceAid\nDoppeltippen zum Start");
-
-// Doppeltippen zum Start/Stop
-Bangle.on("touch", (btn, xy) => {
+// Doppeltippen (Tap-Geste) zum Start/Stop
+Bangle.on("tap", () => {
   let now = Date.now();
-  if (!global._lastTouch) global._lastTouch = 0;
-  if (now - global._lastTouch < 400) {
+  if (!global._lastTap) global._lastTap = 0;
+  if (now - global._lastTap < 500) {
     toggleApp();
-    global._lastTouch = 0;
+    global._lastTap = 0;
   } else {
-    global._lastTouch = now;
+    global._lastTap = now;
   }
 });
