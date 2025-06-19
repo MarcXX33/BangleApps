@@ -1,4 +1,4 @@
-// ORIGO BalanceAid – Atemtrainer final mit 3s Pause, automatischer Weiterlauf und verbessertem Tap
+// ORIGO BalanceAid – Dauerzyklus mit 3s Pause, zentriert, Logging, verbessertem Tap
 
 let running = false;
 let phaseIndex = 0;
@@ -23,7 +23,7 @@ function showPhase(label, color, time, total) {
   const cx = g.getWidth() / 2;
 
   g.setColor("#FFFFFF");
-  g.setFontAlign(0, -1); // horizontal zentriert, oben ausgerichtet
+  g.setFontAlign(0, -1);
 
   g.setFont("Vector", 28);
   g.drawString(label, cx, 20);
@@ -62,6 +62,7 @@ function logSession() {
 
 function nextPhase() {
   if (!running) return;
+
   const p = phases[phaseIndex];
   let t = 1;
   showPhase(p.label, p.color, t, p.duration);
@@ -71,14 +72,15 @@ function nextPhase() {
     if (!running || t >= p.duration) {
       clearInterval(secInt);
 
-      // Nach kompletter Runde loggen
       if (phaseIndex === 2) {
         hrmEnd = hrm;
         logSession();
+        hrmStart = null;
+        hrmEnd = null;
       }
 
       phaseIndex = (phaseIndex + 1) % phases.length;
-      setTimeout(nextPhase, 100); // direkt weitermachen
+      setTimeout(nextPhase, 100);
       return;
     }
     showPhase(p.label, p.color, ++t, p.duration);
@@ -116,7 +118,7 @@ g.setFontAlign(0, 0);
 g.setFont("Vector", 24);
 g.drawString("BalanceAid\nDoppeltap", g.getWidth()/2, g.getHeight()/2);
 
-// Verbesserte Doppeltap-Erkennung (tap + visuelles Feedback)
+// Verbesserte Doppeltap-Erkennung
 let tapCount = 0;
 let tapTimer;
 Bangle.on("tap", () => {
