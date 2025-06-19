@@ -1,4 +1,4 @@
-// ORIGO BalanceAid – Zentriert + Logging + Doppeltap + Download (Bangle.js 2)
+// ORIGO BalanceAid – Atemtrainer final mit 3s Pause, automatischer Weiterlauf und verbessertem Tap
 
 let running = false;
 let phaseIndex = 0;
@@ -7,12 +7,12 @@ let hrmStart = null;
 let hrmEnd = null;
 let logs = [];
 
-// Atemphasen
+// Atemphasen (Pause auf 3 Sekunden reduziert)
 const phases = [
   { label: "Einatmen", duration: 4, color: "#0000FF", action: "pulse" },
   { label: "Halten", duration: 7, color: "#00FF00", action: "none" },
   { label: "Ausatmen", duration: 8, color: "#800080", action: "custom" },
-  { label: "Pause", duration: 5, color: "#000000", action: "none" },
+  { label: "Pause", duration: 3, color: "#000000", action: "none" }
 ];
 
 function showPhase(label, color, time, total) {
@@ -70,12 +70,15 @@ function nextPhase() {
   let secInt = setInterval(() => {
     if (!running || t >= p.duration) {
       clearInterval(secInt);
-      phaseIndex = (phaseIndex + 1) % phases.length;
-      if (phaseIndex === 0) {
+
+      // Nach kompletter Runde loggen
+      if (phaseIndex === 2) {
         hrmEnd = hrm;
         logSession();
       }
-      setTimeout(nextPhase, 100);
+
+      phaseIndex = (phaseIndex + 1) % phases.length;
+      setTimeout(nextPhase, 100); // direkt weitermachen
       return;
     }
     showPhase(p.label, p.color, ++t, p.duration);
@@ -113,13 +116,23 @@ g.setFontAlign(0, 0);
 g.setFont("Vector", 24);
 g.drawString("BalanceAid\nDoppeltap", g.getWidth()/2, g.getHeight()/2);
 
-// Verbesserte Tap-Erkennung
+// Verbesserte Doppeltap-Erkennung (tap + visuelles Feedback)
 let tapCount = 0;
 let tapTimer;
 Bangle.on("tap", () => {
   tapCount++;
   if (tapCount === 1) {
-    tapTimer = setTimeout(() => { tapCount = 0; }, 500);
+    g.clear();
+    g.setColor("#FFFF00");
+    g.setFontAlign(0, 0);
+    g.setFont("Vector", 24);
+    g.drawString("Tap erkannt...", g.getWidth()/2, g.getHeight()/2);
+    tapTimer = setTimeout(() => {
+      tapCount = 0;
+      g.clear();
+      g.setFont("Vector", 24);
+      g.drawString("BalanceAid\nDoppeltap", g.getWidth()/2, g.getHeight()/2);
+    }, 600);
   } else if (tapCount === 2) {
     clearTimeout(tapTimer);
     tapCount = 0;
