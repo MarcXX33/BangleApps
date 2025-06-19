@@ -14,26 +14,27 @@ const phases = [
   { label: "Ausatmen", duration: 8, color: "#800080", action: "custom" },
   { label: "Pause", duration: 5, color: "#000000", action: "none" },
 ];
-
 function showPhase(label, color, time, total) {
   g.clear();
   g.setColor(color);
   g.fillRect(0, 0, g.getWidth(), g.getHeight());
 
+  const centerX = g.getWidth() / 2;
+
   g.setColor("#FFFFFF");
+
+  g.setFontAlign(0, 0); // horizontal zentriert, vertikal Mitte
+
   g.setFont("Vector", 28);
-  const labelW = g.stringWidth(label);
-  g.drawString(label, (g.getWidth() - labelW) / 2, 20);
+  g.drawString(label, centerX, 20);
 
   g.setFont("Vector", 48);
   const timeStr = time + " / " + total;
-  const timeW = g.stringWidth(timeStr);
-  g.drawString(timeStr, (g.getWidth() - timeW) / 2, 60);
+  g.drawString(timeStr, centerX, 70);
 
   g.setFont("Vector", 24);
   const bpmStr = "♥ " + hrm;
-  const bpmW = g.stringWidth(bpmStr);
-  g.drawString(bpmStr, (g.getWidth() - bpmW) / 2, 130);
+  g.drawString(bpmStr, centerX, 140);
 }
 
 function startAction(type, duration) {
