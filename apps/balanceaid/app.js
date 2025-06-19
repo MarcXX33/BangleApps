@@ -1,27 +1,23 @@
-// ORIGO BalanceAid – robuster Endlos-Zyklus ohne Hänger
+// ORIGO BalanceAid – Minimal mit HRM, ohne Logging, ohne Pause
 
-let running = true;
 let phaseIndex = 0;
+let running = true;
 let hrm = "--";
 let hrmStart = null;
-let hrmEnd = null;
-let logs = [];
 
-// Atemphasen: Einatmen, Halten, Ausatmen, Pause (jeweils mit Dauer und Farbe)
+// Nur 3 Phasen für Stabilitätstest
 const phases = [
   { label: "Einatmen", duration: 4, color: "#0000FF", action: "pulse" },
   { label: "Halten", duration: 7, color: "#00FF00", action: "none" },
-  { label: "Ausatmen", duration: 8, color: "#800080", action: "custom" },
-  { label: "Pause", duration: 3, color: "#000000", action: "none" }
+  { label: "Ausatmen", duration: 8, color: "#800080", action: "custom" }
 ];
 
-// Anzeige der aktuellen Phase
 function showPhase(label, color, time, total) {
   g.clear();
   g.setColor(color);
   g.fillRect(0, 0, g.getWidth(), g.getHeight());
-
   const cx = g.getWidth() / 2;
+
   g.setColor("#FFFFFF");
   g.setFontAlign(0, -1);
   g.setFont("Vector", 28);
@@ -34,7 +30,6 @@ function showPhase(label, color, time, total) {
   g.drawString("♥ " + hrm, cx, 130);
 }
 
-// Vibrationen je nach Phase
 function startAction(type, duration) {
   if (type === "pulse") {
     let i = 0;
@@ -43,69 +38,43 @@ function startAction(type, duration) {
       Bangle.buzz(150);
     }, 1000);
   } else if (type === "custom") {
-    [0, 2, 7].forEach(t => setTimeout(() => Bangle.buzz(150), t * 1000));
+    [0, 2].forEach(t => setTimeout(() => Bangle.buzz(150), t * 1000));
   }
 }
 
-// Logging der HRM-Daten
-function logSession() {
-  const now = new Date();
-  const entry = {
-    date: now.toISOString().split("T")[0],
-    time: now.toTimeString().split(" ")[0].slice(0, 5),
-    bpmStart: hrmStart || "--",
-    bpmEnd: hrmEnd || "--"
-  };
-  logs.push(entry);
-  require("Storage").write("balanceaid-log.json", JSON.stringify(logs));
-}
-
-// Zykluslogik – robust und ohne Hänger
-function runPhase() {
+function nextPhase() {
   if (!running) return;
 
-  const phase = phases[phaseIndex];
+  const p = phases[phaseIndex];
   let t = 0;
-  showPhase(phase.label, phase.color, t + 1, phase.duration);
-  startAction(phase.action, phase.duration);
+  showPhase(p.label, p.color, t + 1, p.duration);
+  startAction(p.action, p.duration);
 
   let interval = setInterval(() => {
     if (!running) {
       clearInterval(interval);
       return;
     }
-
     t++;
-    if (t >= phase.duration) {
+    if (t >= p.duration) {
       clearInterval(interval);
-
-      if (phase.label === "Ausatmen") {
-        hrmEnd = hrm;
-        logSession();
-        hrmStart = null;
-        hrmEnd = null;
-      }
-
-      // Nächste Phase vorbereiten
       phaseIndex = (phaseIndex + 1) % phases.length;
-
-      // WICHTIG: nächste Phase sofort starten
-      setTimeout(runPhase, 250);
+      setTimeout(nextPhase, 250);
     } else {
-      showPhase(phase.label, phase.color, t + 1, phase.duration);
+      showPhase(p.label, p.color, t + 1, p.duration);
     }
   }, 1000);
 }
 
-// App initial starten
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-Bangle.setLCDTimeout(0);
+// HRM aktivieren
 Bangle.setHRMPower(1);
 Bangle.on("HRM", d => {
   hrm = Math.round(d.bpm);
   if (hrmStart === null) hrmStart = hrm;
 });
 
-// Start des ersten Zyklus
-runPhase();
+// App-Start
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+Bangle.setLCDTimeout(0);
+nextPhase();
