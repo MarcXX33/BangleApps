@@ -1,4 +1,4 @@
-// ORIGO BalanceAid – Fix: endloser Zyklus, kein Stopp nach Ausatmen
+// ORIGO BalanceAid – robuster Endlos-Zyklus ohne Hänger
 
 let running = true;
 let phaseIndex = 0;
@@ -7,7 +7,7 @@ let hrmStart = null;
 let hrmEnd = null;
 let logs = [];
 
-// Atemphasen
+// Atemphasen: Einatmen, Halten, Ausatmen, Pause (jeweils mit Dauer und Farbe)
 const phases = [
   { label: "Einatmen", duration: 4, color: "#0000FF", action: "pulse" },
   { label: "Halten", duration: 7, color: "#00FF00", action: "none" },
@@ -15,6 +15,7 @@ const phases = [
   { label: "Pause", duration: 3, color: "#000000", action: "none" }
 ];
 
+// Anzeige der aktuellen Phase
 function showPhase(label, color, time, total) {
   g.clear();
   g.setColor(color);
@@ -33,6 +34,7 @@ function showPhase(label, color, time, total) {
   g.drawString("♥ " + hrm, cx, 130);
 }
 
+// Vibrationen je nach Phase
 function startAction(type, duration) {
   if (type === "pulse") {
     let i = 0;
@@ -45,6 +47,7 @@ function startAction(type, duration) {
   }
 }
 
+// Logging der HRM-Daten
 function logSession() {
   const now = new Date();
   const entry = {
@@ -54,17 +57,17 @@ function logSession() {
     bpmEnd: hrmEnd || "--"
   };
   logs.push(entry);
-  console.log("LOG", entry);
   require("Storage").write("balanceaid-log.json", JSON.stringify(logs));
 }
 
-function nextPhase() {
+// Zykluslogik – robust und ohne Hänger
+function runPhase() {
   if (!running) return;
 
-  const p = phases[phaseIndex];
-  let t = 1;
-  showPhase(p.label, p.color, t, p.duration);
-  startAction(p.action, p.duration);
+  const phase = phases[phaseIndex];
+  let t = 0;
+  showPhase(phase.label, phase.color, t + 1, phase.duration);
+  startAction(phase.action, phase.duration);
 
   let interval = setInterval(() => {
     if (!running) {
@@ -72,30 +75,29 @@ function nextPhase() {
       return;
     }
 
-    if (t >= p.duration) {
+    t++;
+    if (t >= phase.duration) {
       clearInterval(interval);
 
-      if (p.label === "Ausatmen") {
+      if (phase.label === "Ausatmen") {
         hrmEnd = hrm;
         logSession();
         hrmStart = null;
         hrmEnd = null;
       }
 
+      // Nächste Phase vorbereiten
       phaseIndex = (phaseIndex + 1) % phases.length;
 
-      // sicher direkt weiter mit der nächsten Phase
-      setTimeout(() => {
-        nextPhase();
-      }, 200);
+      // WICHTIG: nächste Phase sofort starten
+      setTimeout(runPhase, 250);
     } else {
-      t++;
-      showPhase(p.label, p.color, t, p.duration);
+      showPhase(phase.label, phase.color, t + 1, phase.duration);
     }
   }, 1000);
 }
 
-// App Start
+// App initial starten
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setLCDTimeout(0);
@@ -104,4 +106,6 @@ Bangle.on("HRM", d => {
   hrm = Math.round(d.bpm);
   if (hrmStart === null) hrmStart = hrm;
 });
-nextPhase(); // Automatischer Start
+
+// Start des ersten Zyklus
+runPhase();
