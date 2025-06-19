@@ -1,4 +1,4 @@
-// ORIGO BalanceAid – startet automatisch, 3s Pause, Loop, Logging
+// ORIGO BalanceAid – Fix: endloser Zyklus, kein Stopp nach Ausatmen
 
 let running = true;
 let phaseIndex = 0;
@@ -21,7 +21,6 @@ function showPhase(label, color, time, total) {
   g.fillRect(0, 0, g.getWidth(), g.getHeight());
 
   const cx = g.getWidth() / 2;
-
   g.setColor("#FFFFFF");
   g.setFontAlign(0, -1);
   g.setFont("Vector", 28);
@@ -76,7 +75,7 @@ function nextPhase() {
     if (t >= p.duration) {
       clearInterval(interval);
 
-      if (phaseIndex === 2) {
+      if (p.label === "Ausatmen") {
         hrmEnd = hrm;
         logSession();
         hrmStart = null;
@@ -84,14 +83,19 @@ function nextPhase() {
       }
 
       phaseIndex = (phaseIndex + 1) % phases.length;
-      setTimeout(nextPhase, 200);
+
+      // sicher direkt weiter mit der nächsten Phase
+      setTimeout(() => {
+        nextPhase();
+      }, 200);
     } else {
-      showPhase(p.label, p.color, ++t, p.duration);
+      t++;
+      showPhase(p.label, p.color, t, p.duration);
     }
   }, 1000);
 }
 
-// Setup + Autostart
+// App Start
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setLCDTimeout(0);
@@ -100,5 +104,4 @@ Bangle.on("HRM", d => {
   hrm = Math.round(d.bpm);
   if (hrmStart === null) hrmStart = hrm;
 });
-
-nextPhase(); // automatisch starten
+nextPhase(); // Automatischer Start
