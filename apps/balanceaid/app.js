@@ -1,4 +1,4 @@
-// ORIGO BalanceAid – Atemtrainer mit Logging, BPM-Anzeige und Tap-Start/Stop
+// ORIGO BalanceAid – Zentriert + Logging + Doppeltap + Download (Bangle.js 2)
 
 let running = false;
 let phaseIndex = 0;
@@ -14,27 +14,25 @@ const phases = [
   { label: "Ausatmen", duration: 8, color: "#800080", action: "custom" },
   { label: "Pause", duration: 5, color: "#000000", action: "none" },
 ];
+
 function showPhase(label, color, time, total) {
   g.clear();
   g.setColor(color);
   g.fillRect(0, 0, g.getWidth(), g.getHeight());
 
-  const centerX = g.getWidth() / 2;
+  const cx = g.getWidth() / 2;
 
   g.setColor("#FFFFFF");
-
-  g.setFontAlign(0, 0); // horizontal zentriert, vertikal Mitte
+  g.setFontAlign(0, -1); // horizontal zentriert, oben ausgerichtet
 
   g.setFont("Vector", 28);
-  g.drawString(label, centerX, 20);
+  g.drawString(label, cx, 20);
 
   g.setFont("Vector", 48);
-  const timeStr = time + " / " + total;
-  g.drawString(timeStr, centerX, 70);
+  g.drawString(time + " / " + total, cx, 60);
 
   g.setFont("Vector", 24);
-  const bpmStr = "♥ " + hrm;
-  g.drawString(bpmStr, centerX, 140);
+  g.drawString("♥ " + hrm, cx, 130);
 }
 
 function startAction(type, duration) {
@@ -51,13 +49,15 @@ function startAction(type, duration) {
 
 function logSession() {
   const now = new Date();
-  logs.push({
+  const entry = {
     date: now.toISOString().split("T")[0],
-    time: now.toTimeString().split(" ")[0].slice(0,5),
+    time: now.toTimeString().split(" ")[0].slice(0, 5),
     bpmStart: hrmStart || "--",
     bpmEnd: hrmEnd || "--"
-  });
-  console.log("LOG", logs[logs.length - 1]);
+  };
+  logs.push(entry);
+  console.log("LOG", entry);
+  require("Storage").write("balanceaid-log.json", JSON.stringify(logs));
 }
 
 function nextPhase() {
@@ -99,8 +99,9 @@ function toggleApp() {
     Bangle.removeAllListeners("HRM");
     g.clear();
     g.setColor("#FFFFFF");
+    g.setFontAlign(0, 0);
     g.setFont("Vector", 24);
-    g.drawString("BalanceAid beendet", 20, 80);
+    g.drawString("BalanceAid beendet", g.getWidth()/2, g.getHeight()/2);
   }
 }
 
@@ -108,7 +109,9 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setLCDTimeout(0);
 g.clear();
-E.showMessage("BalanceAid\nDoppeltap zum Start");
+g.setFontAlign(0, 0);
+g.setFont("Vector", 24);
+g.drawString("BalanceAid\nDoppeltap", g.getWidth()/2, g.getHeight()/2);
 
 // Verbesserte Tap-Erkennung
 let tapCount = 0;
