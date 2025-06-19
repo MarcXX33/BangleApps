@@ -1,0 +1,13 @@
+{
+  "id": "balanceaid",
+  "name": "BalanceAid",
+  "shortName": "Breath",
+  "description": "4-7-8 Atemtrainer mit Vibration und Herzfrequenz-Anzeige",
+  "icon": "icon.png",
+  "type": "app",
+  "tags": ["breath", "focus", "relaxation"],
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    { "name": "balanceaid.app.js", "url": "app.js" }
+  ]
+}
