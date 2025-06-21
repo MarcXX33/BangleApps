@@ -1,1 +1,13 @@
-
+{
+  "id": "origoclock",
+  "name": "ORIGO Clock",
+  "shortName": "ORIGO",
+  "version": "1.0",
+  "icon": "icon.png",
+  "description": "Uhr mit Puls‑Trigger, Box‑Atmung, 4‑7‑8 und Meditation",
+  "type": "clock",
+  "storage": [
+    {"name":"origoclock.app.js","url":"app.js"},
+    {"name":"origoclock.img","url":"icon.png"}
+  ]
+}
