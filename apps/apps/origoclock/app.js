@@ -1,7 +1,14 @@
-g.clear();
-g.setFont("6x8",2);
-g.setFontAlign(0,0);
-g.drawString("ORIGO Clock", g.getWidth()/2, g.getHeight()/2);
-setTimeout(() => {
-  Bangle.showLauncher();
-}, 2000);
+{
+  "id": "origoclock",
+  "name": "ORIGO Clock",
+  "type": "app",
+  "icon": "icon.png",
+  "version": "0.01",
+  "description": "Mindfulness clock with HRM features",
+  "tags": "breathing,clock,tool",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"origoclock.app.js","url":"app.js"},
+    {"name":"origoclock.img","url":"icon.png"}
+  ]
+}
