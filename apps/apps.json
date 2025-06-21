@@ -1,0 +1,11 @@
+[
+  {
+    "id": "origoclock",
+    "name": "ORIGO Clock",
+    "type": "clock",
+    "src": "apps/clock/origoclock",
+    "icon": "origoclock/icon.png",
+    "version": "1.0",
+    "description": "Achtsame Uhr mit Puls-Trigger, Meditation und Atemtraining."
+  }
+]
