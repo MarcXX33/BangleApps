@@ -4,12 +4,11 @@
   "type": "app",
   "icon": "icon.png",
   "version": "0.01",
-  "description": "Mindfulness clock with pulse-triggered breathing, 4-7-8 breath and meditation.",
-  "tags": "tool,mindfulness,clock",
+  "description": "Mindfulness clock with HRM-triggered breathing.",
+  "tags": "tool,breathing,clock",
   "supports": ["BANGLEJS2"],
   "storage": [
-    {"name":"app.js","url":"app.js"},
-    {"name":"app.info","url":"app.info"},
-    {"name":"icon.png","url":"icon.png"}
+    { "name": "origoclock.app.js", "url": "app.js" },
+    { "name": "origoclock.img", "url": "icon.png" }
   ]
 }
