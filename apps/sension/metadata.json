@@ -2,7 +2,7 @@
   "id": "sension",
   "name": "Sension",
   "shortName": "Sension",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Eine auf Pebble basierende Uhr mit zwei konfigurierbaren Atemübungen als Widgets und einer intelligenten, auf der Herzfrequenz basierenden Atemaufforderung.",
   "icon": "sension.img",
   "type": "clock",
@@ -10,8 +10,7 @@
   "supports": ["BANGLEJS2"],
   "dependencies": {
     "clock_info": "module",
-    "clockbg": "module",
-    "widget_utils": "module"
+    "clockbg": "module"
   },
   "storage": [
     {
