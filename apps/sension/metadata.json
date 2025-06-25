@@ -1,0 +1,36 @@
+{
+  "id": "sension",
+  "name": "Sension",
+  "shortName": "Sension",
+  "version": "1.0.0",
+  "description": "Eine auf Pebble basierende Uhr mit zwei konfigurierbaren Atemübungen als Widgets und einer intelligenten, auf der Herzfrequenz basierenden Atemaufforderung.",
+  "icon": "sension.img",
+  "type": "clock",
+  "tags": "clock, clkinfo, health, breath, sension",
+  "supports": ["BANGLEJS2"],
+  "dependencies": {
+    "clock_info": "module",
+    "clockbg": "module",
+    "widget_utils": "module"
+  },
+  "storage": [
+    {
+      "name": "sension.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "sension.settings.js",
+      "url": "settings.js"
+    },
+    {
+      "name": "sension.img",
+      "url": "icon.js",
+      "evaluate": true
+    }
+  ],
+  "data": [
+    {
+      "name": "sension.settings.json"
+    }
+  ]
+}
