@@ -4,14 +4,14 @@
   let currentBpm = 0;
   let hrmConfidence = 0;
   let highBpmPromptShown = false;
-  let clockInfoMenuA, clockInfoMenuB; // Menüs global definieren
+  let clockInfoMenuA, clockInfoMenuB;
+  let buildPebbleUi, draw;
 
   function restoreClockUi() {
     exerciseInProgress = null;
     Bangle.setUI();
     g.clear();
     Bangle.loadWidgets();
-    // Die Zeile mit widget_utils.swipeOn() wurde hier entfernt.
     buildPebbleUi();
     draw();
     Bangle.setLCDTimeout(10);
@@ -143,8 +143,6 @@
     updateBpm: function() { if (this.isRunning) { this.drawPhaseScreen(); } }
   };
 
-  var buildPebbleUi, draw; // Forward declare
-  
   (function() {
     const SETTINGS_FILE = "sension.settings.json";
     let settings = {}, theme, drawTimeout;
@@ -246,3 +244,7 @@
     });
 
     Bangle.setHRMPower(1);
+    restoreClockUi();
+  })();
+  // Diese schließende Klammer hat wahrscheinlich gefehlt
+})();
