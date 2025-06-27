@@ -1,13 +1,12 @@
 {
   "id": "origo360",
   "name": "Origo 360",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "clock",
   "icon": "icon.png",
   "description": "Eine auf Pebble++ basierende Uhr. Diese Version wurde erstellt, um Installationsprobleme zu beheben.",
   "dependencies": {
-    "clockbg": "module",
-    "widget_utils": "module"
+    "clockbg": "module"
   },
   "storage": [
     {"name": "origo360.app.js", "url": "app.js"},
