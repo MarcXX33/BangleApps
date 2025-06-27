@@ -1,0 +1,19 @@
+{
+  "id": "origo360",
+  "name": "Origo 360",
+  "version": "1.0.0",
+  "description": "Ein stabiles Zifferblatt mit App-Launcher-Funktion.",
+  "icon": "app.ico",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "dependencies": {
+    "clockbg": "module"
+  },
+  "storage": [
+    {"name": "origo360.app.js", "url": "app.js"},
+    {"name": "origo360.settings.js", "url": "settings.js"},
+    {"name": "origo360.img", "url": "app.ico", "evaluate": true}
+  ],
+  "data": [{"name":"origo360.settings.json"}]
+}
