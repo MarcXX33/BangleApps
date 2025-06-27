@@ -1,7 +1,4 @@
-// Sensation Clock - Clean Fork from Pebble++ with customizable widgets
-// Widgets: Box Breathing + 4-7-8 + Puls Trigger READY (Einbindung folgt)
-
-const SETTINGS_FILE = "sensation.json";
+const SETTINGS_FILE = "origo360.settings.json"; // KORRIGIERT
 let settings = Object.assign({'theme':'System','showdate':true,'clkinfoborder':true}, require("Storage").readJSON(SETTINGS_FILE,1)||{});
 
 let background = require("clockbg");
