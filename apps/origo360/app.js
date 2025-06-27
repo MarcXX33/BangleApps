@@ -1,63 +1,65 @@
-const SETTINGS_FILE = "origo360.settings.json";
-let settings = Object.assign({'theme':'System','showdate':true,'clkinfoborder':true}, require("Storage").readJSON(SETTINGS_FILE,1)||{});
+let bpm = "---";
+let bpmConfidence = 0;
+let lastBpmTime = 0;
 
-let background = require("clockbg");
-let theme;
-let drawTimeout;
-
-const h = g.getHeight();
 const w = g.getWidth();
-const h2 = Math.round(3*h/5) - 10;
-const h3 = Math.round(7*h/8);
+const h = g.getHeight();
+const half_w = w / 2;
 
 function draw() {
-  let locale = require("locale");
-  let date = new Date();
-  let time = locale.time(date, 1);
-
   g.reset();
-  g.setBgColor(theme.bg).clearRect(0, h2, w, h3);
-  if (settings.showdate) {
-    g.setColor(theme.fg).fillRect(w / 2 - 30, h3 + 5, w / 2 + 30, h);
-    g.setFont("6x8",2).setFontAlign(0, -1);
-    g.setColor(theme.bg).drawString(date.getDate() + "." + (date.getMonth() + 1), w / 2, h3 + 5);
-  }
-  g.setFont("6x8",4).setFontAlign(0, -1);
-  g.setColor(theme.fg);
-  g.drawString(time, w/2, h2 + 8);
+  const date = new Date();
+  const timeStr = require("locale").time(date, 1);
+  const dateStr = require("locale").date(date, 0).toUpperCase();
 
+  g.setBgColor(g.theme.bg).clear();
+  
+  g.setFont("Vector", 70);
+  g.setFontAlign(0, 0);
+  g.setColor(g.theme.fg);
+  g.drawString(timeStr, half_w, h/2 - 20);
+
+  g.setFont("Vector", 22);
+  g.drawString(dateStr, half_w, h/2 + 30);
+  
+  let bpmColor = '#888';
+  if (bpmConfidence > 70 && (Date.now() - lastBpmTime) < 4000) {
+     bpmColor = '#f00';
+     if (bpm >= 110) {
+       Bangle.buzz(400, 1);
+       load("atem46.app.js");
+     }
+  }
+  g.setColor(bpmColor).setFont("Vector:28").drawString(bpm, half_w, h - 28);
+  
   if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
+  drawTimeout = setTimeout(()=> {
     drawTimeout = undefined;
     draw();
   }, 60000 - (Date.now() % 60000));
 }
 
-function loadThemeColors() {
-  theme = {fg: g.theme.fg, bg: g.theme.bg};
-  if (settings.theme === "Dark") {
-    theme.fg = g.toColor(1,1,1);
-    theme.bg = g.toColor(0,0,0);
-  } else if (settings.theme === "Light") {
-    theme.fg = g.toColor(0,0,0);
-    theme.bg = g.toColor(1,1,1);
+Bangle.on('HRM', function(hrm) {
+  bpmConfidence = hrm.confidence;
+  if (bpmConfidence > 60) {
+    bpm = hrm.bpm;
+    lastBpmTime = Date.now();
   }
-}
-
-loadThemeColors();
-
-Bangle.setUI({
-  mode: "clock",
-  remove: function() {
-    if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
-    // Die Zeile require("widget_utils").show() wurde entfernt
-  },
-  redraw: draw
 });
 
+// App-Launcher per Touch
+Bangle.on("touch", function(button, xy) {
+  Bangle.buzz(100);
+  if (xy.x < w/2 && xy.y < h/2) load("atem478.app.js");
+  if (xy.x >= w/2 && xy.y < h/2) load("atem444.app.js");
+  if (xy.x < w/2 && xy.y >= h/2) load("atem46.app.js");
+  if (xy.x >= w/2 && xy.y >= h/2) load("medit15.app.js");
+});
+
+g.clear();
+Bangle.setHRMPower(1, "clock");
 Bangle.loadWidgets();
-// Die Zeile require("widget_utils").swipeOn() wurde entfernt
-background.fillRect(Bangle.appRect);
-g.setColor(theme.fg).fillRect(0, h2 - 6, w, h3 + 6);
+Bangle.drawWidgets();
+let drawTimeout;
 draw();
+Bangle.setUI("clock");
