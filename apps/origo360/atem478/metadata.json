@@ -1,0 +1,9 @@
+{
+  "id": "atem478",
+  "name": "Atem 4-7-8",
+  "type": "app",
+  "icon": "app.ico",
+  "src": "app.js",
+  "files": "app.js,app.ico",
+  "sortorder": -10
+}
