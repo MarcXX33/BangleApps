@@ -1,17 +1,21 @@
 {
-  "id": "orgio360",
-  "name": "ORGIO 360",
+  "id": "sension",
+  "name": "Sension",
   "version": "0.01",
   "type": "clock",
   "icon": "icon.png",
-  "description": "Pebble++-basierte Uhr mit eingebautem Pulstrigger ab 110bpm für 4-6-Atmung.",
+  "description": "Pebble++-basierte Uhr mit Pulstrigger ab 110bpm für 4-6-Atmung.",
+  "dependencies": {
+    "clockbg": "module",
+    "widget_utils": "module"
+  },
   "storage": [
-    {"name": "orgio360.app.js", "url": "app.js"},
-    {"name": "orgio360.settings.js", "url": "settings.js"},
-    {"name": "orgio360.img", "url": "icon.js", "evaluate": true}
+    {"name": "sension.app.js", "url": "app.js"},
+    {"name": "sension.settings.js", "url": "settings.js"},
+    {"name": "sension.img", "url": "icon.js", "evaluate": true}
   ],
   "data": [
-    {"name": "orgio360.settings.json"}
+    {"name": "sension.settings.json"}
   ],
   "supports": ["BANGLEJS2"]
 }
