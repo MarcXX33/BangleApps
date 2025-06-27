@@ -1,4 +1,4 @@
-const SETTINGS_FILE = "origo360.settings.json"; // KORRIGIERT
+const SETTINGS_FILE = "origo360.settings.json";
 let settings = Object.assign({'theme':'System','showdate':true,'clkinfoborder':true}, require("Storage").readJSON(SETTINGS_FILE,1)||{});
 
 let background = require("clockbg");
@@ -51,13 +51,13 @@ Bangle.setUI({
   remove: function() {
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
-    require("widget_utils").show();
+    // Die Zeile require("widget_utils").show() wurde entfernt
   },
   redraw: draw
 });
 
 Bangle.loadWidgets();
-require("widget_utils").swipeOn();
+// Die Zeile require("widget_utils").swipeOn() wurde entfernt
 background.fillRect(Bangle.appRect);
 g.setColor(theme.fg).fillRect(0, h2 - 6, w, h3 + 6);
 draw();
