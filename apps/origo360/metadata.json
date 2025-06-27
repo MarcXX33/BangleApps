@@ -1,0 +1,17 @@
+{
+  "id": "orgio360",
+  "name": "ORGIO 360",
+  "version": "0.01",
+  "type": "clock",
+  "icon": "icon.png",
+  "description": "Pebble++-basierte Uhr mit eingebautem Pulstrigger ab 110bpm für 4-6-Atmung.",
+  "storage": [
+    {"name": "orgio360.app.js", "url": "app.js"},
+    {"name": "orgio360.settings.js", "url": "settings.js"},
+    {"name": "orgio360.img", "url": "icon.js", "evaluate": true}
+  ],
+  "data": [
+    {"name": "orgio360.settings.json"}
+  ],
+  "supports": ["BANGLEJS2"]
+}
