@@ -9,8 +9,7 @@
   "tags": "clock, clkinfo, health, breath, sension",
   "supports": ["BANGLEJS2"],
   "dependencies": {
-    "clock_info": "module",
-    "clockbg": "module"
+    "clock_info": "module"
   },
   "storage": [
     {
@@ -24,6 +23,11 @@
     {
       "name": "sension.img",
       "url": "icon.js",
+      "evaluate": true
+    },
+    {
+      "name": "clockbg.js",
+      "url": "clockbg.js",
       "evaluate": true
     }
   ],
