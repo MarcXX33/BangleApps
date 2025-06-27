@@ -1,4 +1,3 @@
-
 // Sensation Clock - Clean Fork from Pebble++ with customizable widgets
 // Widgets: Box Breathing + 4-7-8 + Puls Trigger READY (Einbindung folgt)
 
