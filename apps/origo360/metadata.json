@@ -1,21 +1,21 @@
 {
-  "id": "sension",
-  "name": "Sension",
-  "version": "0.01",
+  "id": "origo360",
+  "name": "Origo 360",
+  "version": "1.0.0",
   "type": "clock",
   "icon": "icon.png",
-  "description": "Pebble++-basierte Uhr mit Pulstrigger ab 110bpm für 4-6-Atmung.",
+  "description": "Eine auf Pebble++ basierende Uhr. Diese Version wurde erstellt, um Installationsprobleme zu beheben.",
   "dependencies": {
     "clockbg": "module",
     "widget_utils": "module"
   },
   "storage": [
-    {"name": "sension.app.js", "url": "app.js"},
-    {"name": "sension.settings.js", "url": "settings.js"},
-    {"name": "sension.img", "url": "icon.js", "evaluate": true}
+    {"name": "origo360.app.js", "url": "app.js"},
+    {"name": "origo360.settings.js", "url": "settings.js"},
+    {"name": "origo360.img", "url": "icon.js", "evaluate": true}
   ],
   "data": [
-    {"name": "sension.settings.json"}
+    {"name": "origo360.settings.json"}
   ],
   "supports": ["BANGLEJS2"]
 }
